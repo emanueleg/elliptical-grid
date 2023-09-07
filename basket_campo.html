@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Basket field experiment</title>
+  </head>
+  <body><
+    <canvas id="canvas1" width="681" height="681" border="1"></canvas>
+    <script type="application/javascript">
+      function draw() {
+        const canvas1 = document.getElementById("canvas1");
+        if (canvas1.getContext) {
+          const ctx1 = canvas1.getContext("2d");
+          ctx1.fillStyle = "white";
+          ctx1.fillRect(0, 0, canvas1.width, canvas1.height);
+        }
+      }
+      draw();
+    </script>
+
+
+    <canvas id="canvas2" width="681" height="681" border="1"></canvas>
+    <script type="application/javascript">
+        
+        function elliptic() {
+          const canvas1 = document.getElementById("canvas1");
+          const ctx1 = canvas1.getContext("2d");
+          
+          const canvas2 = document.getElementById("canvas2");
+          const ctx2 = canvas2.getContext("2d");
+          
+          ctx2.fillStyle = "white";
+          ctx2.fillRect(0, 0, canvas1.width, canvas1.height);
+
+          const imageData1 = ctx1.getImageData(0, 0, canvas1.width, canvas1.height);
+          const imageData2 = ctx2.createImageData(imageData1);
+          const data1 = imageData1.data;
+          const data2 = imageData2.data;
+
+          const w = canvas1.width
+          const wh = Math.round(w / 2)
+          const h = canvas1.height
+          const hh = Math.round(h / 2)
+          
+          ctx2.fillStyle = "white";
+          ctx2.fillRect(0, 0, canvas1.width, canvas1.height);
+
+          for (let i = 0; i < data1.length; i += 4) {
+                j = i/4;
+                
+                x = j % w;
+                y = Math.floor(j / canvas1.width);
+                
+                x = (x-wh)/wh
+                y = (y-hh)/hh
+    
+                xc = x * Math.sqrt(1 - (y*y)/2);
+                yc = y * Math.sqrt(1 - (x*x)/2);
+
+                xc = Math.floor(xc * wh + wh)
+                yc = Math.floor(yc * hh + wh)
+                
+                ic = yc * canvas1.width + xc;
+                ic = (ic * 4);
+                data2[ic] = data1[i]; // red
+                data2[ic + 1] = data1[i + 1]; // green
+                data2[ic + 2] = data1[i + 2];; // blue
+                data2[ic + 3] = data1[i + 3]; // A value
+          }
+          ctx2.putImageData(imageData2, 0, 0);
+        };
+    
+        var img1a = new Image();
+        img1a.setAttribute('crossOrigin', 'anonymous');
+        img1a.onload = function () {
+            const canvas1a = document.getElementById("canvas1");
+            const ctx1a = canvas1a.getContext("2d");
+            ctx1a.drawImage(img1a, 0, 0);
+            
+            elliptic();
+        };
+        
+        img1a.src = "./campo_quadrato.png";
+    </script>
+
+
+  </body>
+</html>

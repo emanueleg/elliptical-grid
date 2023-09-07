@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Basket field experiment - trajectories</title>
+  </head>
+  <body style="background-color: #000000;">
+    <canvas id="canvas1" width="681" height="681" border="1"></canvas>
+    <script type="application/javascript">
+      function draw() {
+        const canvas1 = document.getElementById("canvas1");
+        if (canvas1.getContext) {
+          const ctx1 = canvas1.getContext("2d");
+          ctx1.fillStyle = "white";
+          ctx1.fillRect(0, 0, canvas1.width, canvas1.height);
+        }
+      }
+      draw();
+    </script>
+
+    <br>
+    <canvas id="canvas2" width="681" height="681" border="1"></canvas>
+    <script type="application/javascript">
+        
+        function elliptic() {
+          const canvas1 = document.getElementById("canvas1");
+          const ctx1 = canvas1.getContext("2d");
+          
+          const canvas2 = document.getElementById("canvas2");
+          const ctx2 = canvas2.getContext("2d");
+          
+          ctx2.fillStyle = "white";
+          ctx2.fillRect(0, 0, canvas1.width, canvas1.height);
+
+          const imageData1 = ctx1.getImageData(0, 0, canvas1.width, canvas1.height);
+          const imageData2 = ctx2.createImageData(imageData1);
+          const data1 = imageData1.data;
+          const data2 = imageData2.data;
+
+          const w = canvas1.width
+          const wh = Math.round(w / 2)
+          const h = canvas1.height
+          const hh = Math.round(h / 2)
+          
+          ctx2.fillStyle = "white";
+          ctx2.fillRect(0, 0, canvas1.width, canvas1.height);
+
+          for (let i = 0; i < data1.length; i += 4) {
+                j = i/4;
+                
+                x = j % w;
+                y = Math.floor(j / canvas1.width);
+                
+                x = (x-wh)/wh
+                y = (y-hh)/hh
+    
+                xc = x * Math.sqrt(1 - (y*y)/2);
+                yc = y * Math.sqrt(1 - (x*x)/2);
+
+                xc = Math.floor(xc * wh + wh)
+                yc = Math.floor(yc * hh + wh)
+                
+                ic = yc * canvas1.width + xc;
+                ic = (ic * 4);
+                data2[ic] = data1[i]; // red
+                data2[ic + 1] = data1[i + 1]; // green
+                data2[ic + 2] = data1[i + 2];; // blue
+                data2[ic + 3] = data1[i + 3]; // A value
+          }
+          ctx2.putImageData(imageData2, 0, 0);
+        };
+    
+        var img1a = new Image();
+        var img1b = new Image();
+        var img1c = new Image();
+        //img1a.setAttribute('crossOrigin', 'anonymous');
+        img1a.onload = function () {
+            const canvas1 = document.getElementById("canvas1");
+            const ctx1 = canvas1.getContext("2d");
+            const canvas2 = document.getElementById("canvas2");
+            const ctx2 = canvas2.getContext("2d");
+            ctx1.drawImage(img1a, 0, 0);
+            
+            ctx1.strokeStyle = "rgb(0, 0, 255)";
+            ctx1.lineWidth = 8;
+            
+            
+            let x = Math.floor(Math.random() * 3) + 1; 
+            switch (x) {
+                case 1:
+                    ctx1.beginPath();
+                    ctx1.moveTo(340, 30);
+                    ctx1.lineTo(340, 130);
+                    ctx1.stroke();
+                    elliptic();
+                    ctx1.drawImage(img1b, 302, 120);
+                    ctx2.drawImage(img1b, 302, 120);
+                    break;
+                case 2:
+                    ctx1.beginPath();
+                    ctx1.moveTo(340, 30);
+                    ctx1.lineTo(45, 275);
+                    ctx1.stroke();
+                    elliptic();
+                    ctx1.drawImage(img1c, -8, 230);
+                    ctx2.drawImage(img1c, -5, 245);
+                    break;
+                case 3:
+                    ctx1.beginPath();
+                    ctx1.moveTo(620, 110);
+                    ctx1.lineTo(620, 530);
+                    ctx1.stroke();
+                    elliptic();
+                    ctx1.drawImage(img1b, 580, 510);
+                    ctx2.drawImage(img1b, 560, 470);
+                    break;
+            }
+            
+        };
+        
+        img1b.src = "./player_0.png";
+        img1c.src = "./player_45.png";
+        img1a.src = "./campo_quadrato_filigrana.png";
+    </script>
+
+
+  </body>
+</html>
